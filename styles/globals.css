@@ -6,4 +6,7 @@
   .test {
     @apply border border-red-500;
   }
+  .shadow-after {
+    @apply after:absolute after:inset-0 after:shadow-lg after:shadow-black/20 after:pointer-events-none after:rounded-md;
+  }
 }

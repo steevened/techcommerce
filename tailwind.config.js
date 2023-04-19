@@ -11,6 +11,7 @@ module.exports = withMT({
     extend: {
       boxShadow: {
         app: 'inset 0 0 0 1px rgba(0, 0, 0, 0.1)',
+        'app-2': 'inset 0 0 0 1px rgba(0, 0, 0, 0.2)',
       },
       colors: {
         sky: {

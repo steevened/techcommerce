@@ -44,7 +44,12 @@ export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
           <p className="text-blue-gray-600">${price}</p>
         </div>
         <div className=" items-end flex">
-          <IconButton className="whitespace-nowrap rounded-full aspect-square p-3">
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="whitespace-nowrap rounded-full aspect-square p-3"
+          >
             <CartIcon />
           </IconButton>
         </div>
