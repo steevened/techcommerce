@@ -8,7 +8,7 @@ import {
 import React, { Fragment, useState } from 'react';
 
 export const Sidebar = () => {
-  const [open, setOpen] = useState(1);
+  const [open, setOpen] = useState(0);
 
   const handleOpen = (value: number) => {
     setOpen(open === value ? 0 : value);
