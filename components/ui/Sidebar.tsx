@@ -24,7 +24,7 @@ export const Sidebar = () => {
           Name
         </AccordionHeader>
         <AccordionBody>
-          <Input variant="outlined" label="Name" />
+          <Input variant="outlined" label="Search by name" />
         </AccordionBody>
       </Accordion>
       <Accordion open={open === 2}>

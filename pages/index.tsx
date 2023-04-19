@@ -14,8 +14,6 @@ interface Props {
 const HomePage: NextPageWithLayout<Props> = ({ products }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  console.log(products);
-
   return (
     <main className="">
       <Sidebar />

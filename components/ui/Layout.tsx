@@ -5,7 +5,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <NavbarComponent />
-      <main>{children}</main>
+      <main className="overflow-x-hidden">{children}</main>
     </>
   );
 };

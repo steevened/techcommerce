@@ -1,8 +1,10 @@
 import { Image as image } from '@/lib/interfaces/products.interface';
-import { Button } from '@material-tailwind/react';
+import { Button, IconButton } from '@material-tailwind/react';
 import Image from 'next/image';
 import { FC } from 'react';
 import { CartIcon } from '../atoms/Svg';
+import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 
 interface Props {
   title: string;
@@ -12,10 +14,13 @@ interface Props {
 }
 
 export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
+  const router = useRouter();
+
   return (
     <div
       role="button"
-      className=" w-full max-w-sm aspect-square rounded-lg  flex flex-col shadow-app relative after:absolute after:inset-0 after:shadow-xl after:shadow-black/10 after:pointer-events-none bg-blue-gray-50/50 backdrop-blur-sm"
+      onClick={() => router.push(`/product/${id}`)}
+      className=" w-full max-w-sm aspect-square rounded-lg  flex flex-col shadow-app relative after:absolute after:inset-0 after:shadow-xl after:shadow-black/10 after:pointer-events-none bg-blue-gray-50/10 backdrop-blur-sm after:rounded-lg"
     >
       <div className="w-full aspect-square  max-h-64  p-4   relative group">
         <Image
@@ -39,9 +44,9 @@ export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
           <p className="text-blue-gray-600">${price}</p>
         </div>
         <div className=" items-end flex">
-          <Button className="whitespace-nowrap rounded-full aspect-square p-3">
+          <IconButton className="whitespace-nowrap rounded-full aspect-square p-3">
             <CartIcon />
-          </Button>
+          </IconButton>
         </div>
       </div>
     </div>
