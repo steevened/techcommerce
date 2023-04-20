@@ -1,54 +1,23 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import {
   Navbar,
   MobileNav,
-  Typography,
   Button,
   IconButton,
-  Card,
 } from '@material-tailwind/react';
 import Link from 'next/link';
-import { ProfileMenu } from '../atoms/ProfileMenu';
-import { CartIcon, PurchaseIcon } from '../atoms/Svg';
+import { NavList } from './NavList';
 
 export const NavbarComponent = () => {
-  const [openNav, setOpenNav] = React.useState(false);
+  const [openNav, setOpenNav] = useState(false);
+  const [isUserLogedIn, setIsUserLogedIn] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       'resize',
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-
-  const navList = (
-    <ul className="flex flex-col gap-2 mt-2 mb-4 md:mb-0 md:mt-0 md:flex-row md:items-center ">
-      <li>
-        <Button
-          fullWidth={openNav}
-          variant="text"
-          color="blue"
-          className="flex items-center gap-1"
-        >
-          <Link href="/" className="flex items-center gap-1">
-            <PurchaseIcon />
-            Purchases
-          </Link>
-        </Button>
-      </li>
-      <li>
-        <Button
-          fullWidth={openNav}
-          variant="text"
-          color="blue"
-          className="flex items-center gap-1"
-        >
-          <CartIcon />
-          Cart
-        </Button>
-      </li>
-    </ul>
-  );
 
   return (
     <>
@@ -58,11 +27,10 @@ export const NavbarComponent = () => {
             TechCommerce
           </Link>
           <div className="flex items-center gap-4">
-            <div className="hidden mr-4 md:block">{navList}</div>
+            <div className="hidden mr-4 md:block">
+              <NavList openNav={openNav} isUserLogedIn={isUserLogedIn} />
+            </div>
 
-            <span className="hidden md:inline-block">
-              <ProfileMenu />
-            </span>
             <IconButton
               variant="text"
               className="w-6 h-6 ml-auto text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent md:hidden"
@@ -102,10 +70,8 @@ export const NavbarComponent = () => {
             </IconButton>
           </div>
         </div>
-        <MobileNav open={openNav}>
-          {navList}
-
-          <ProfileMenu />
+        <MobileNav open={openNav} className="md:hidden">
+          <NavList openNav={openNav} isUserLogedIn={isUserLogedIn} />
         </MobileNav>
       </Navbar>
     </>
