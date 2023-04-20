@@ -1,3 +1,4 @@
+import { UIContext } from '@/context/ui/UIContext';
 import {
   Accordion,
   AccordionBody,
@@ -5,16 +6,20 @@ import {
   Checkbox,
   Input,
 } from '@material-tailwind/react';
-import React, { Fragment, useState } from 'react';
+import { useContext, useState } from 'react';
 
 export const Sidebar = () => {
   const [open, setOpen] = useState(0);
+
+  const { sidebarOpen } = useContext(UIContext);
+
+  console.log(sidebarOpen);
 
   const handleOpen = (value: number) => {
     setOpen(open === value ? 0 : value);
   };
   return (
-    <div className="w-64 h-full min-h-[calc(100vh-82px)] px-5 py-10 bg-gray-100 fixed">
+    <div className="w-64 h-full min-h-[calc(100vh-82px)] px-5 py-10 bg-white fixed -translate-x-full md:translate-x-0 ">
       <h2 className="text-2xl font-semibold text-blue-gray-700">Filters</h2>
       <Accordion open={open === 1}>
         <AccordionHeader

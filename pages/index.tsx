@@ -15,10 +15,10 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <main className="">
+    <main className="overflow-auto">
       <Sidebar />
-      <div className="py-5 ml-72">
-        <div className="grid w-max grid-cols-1 lg:grid-cols-2  mx-auto gap-10">
+      <div className="py-5 md:ml-72">
+        <div className="grid  grid-cols-1 xl:grid-cols-2  mx-auto gap-10 px-5 place-items-center max-w-4xl">
           {products.map(({ id, title, images, price }) => (
             <CardProduct
               key={id}

@@ -1,3 +1,4 @@
+import { UIProvider } from '@/context/ui/UIProvider';
 import '@/styles/globals.css';
 import { ThemeProvider } from '@material-tailwind/react';
 import { NextPage } from 'next';
@@ -20,7 +21,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>{getLayout(<Component {...pageProps} />)}</ThemeProvider>
+      <UIProvider>
+        <ThemeProvider>{getLayout(<Component {...pageProps} />)}</ThemeProvider>
+      </UIProvider>
     </QueryClientProvider>
   );
 }
