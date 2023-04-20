@@ -46,7 +46,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
   }, [imageIndex]);
 
   return (
-    <div className="my-5 max-w-screen-xl mx-auto px-5">
+    <div className="max-w-screen-xl px-5 mx-auto my-5">
       <Breadcrumbs>
         <Link href="/" className="opacity-60">
           <HomeIcon />
@@ -56,15 +56,15 @@ const ProductPage: NextPageWithLayout<Props> = ({
         </Link>
       </Breadcrumbs>
       <div className="mt-5">
-        <div className="w-full h-full flex flex-col gap-2 md:flex-row">
-          <div className="w-full h-full flex-1 p-5 overflow-hidden  relative  ">
+        <div className="flex flex-col w-full h-full gap-2 md:flex-row">
+          <div className="relative flex-1 w-full h-full p-5 overflow-hidden ">
             <div
               ref={containerRef}
               className={`w-[300%] flex  duration-500 ease-in-out h-96 slider`}
             >
               {product.images.map((image) => (
                 <div
-                  className="flex-1 flex items-center justify-center  w-full"
+                  className="flex items-center justify-center flex-1 w-full"
                   key={image.id}
                 >
                   <Image
@@ -72,23 +72,23 @@ const ProductPage: NextPageWithLayout<Props> = ({
                     alt={product.title}
                     width={1000}
                     height={1000}
-                    className="w-5/6 h-5/6 object-contain"
+                    className="object-contain w-5/6 h-5/6"
                   />
                 </div>
               ))}
             </div>
-            <div className="absolute top-1/2 left-0">
+            <div className="absolute left-0 top-1/2">
               <IconButton onClick={handleSliderBack}>
                 <ArrowIcon />
               </IconButton>
             </div>
-            <div className="absolute top-1/2 right-0">
+            <div className="absolute right-0 top-1/2">
               <IconButton onClick={handleSlider}>
                 <ArrowIcon rotate />
               </IconButton>
             </div>
-            <div className=" w-1/2 mx-auto mb-4">
-              <div className="w-full flex relative">
+            <div className="w-1/2 mx-auto mb-4 ">
+              <div className="relative flex w-full">
                 {product.images.map((image, i) => (
                   <div
                     role="button"
@@ -103,7 +103,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                       alt={product.title}
                       width={1000}
                       height={1000}
-                      className="w-5/6 h-5/6 object-contain"
+                      className="object-contain w-5/6 h-5/6"
                     />
                   </div>
                 ))}
@@ -120,10 +120,10 @@ const ProductPage: NextPageWithLayout<Props> = ({
               </div>
             </div>
           </div>
-          <div className="flex-1 flex flex-col px-4  py-2">
+          <div className="flex flex-col flex-1 px-4 py-2">
             <div className="grow">
               <div>
-                <h2 className="text-center font-semibold text-2xl text-blue-gray-800">
+                <h2 className="text-2xl font-semibold text-center text-blue-gray-800">
                   {product?.title}
                 </h2>
               </div>
@@ -131,16 +131,16 @@ const ProductPage: NextPageWithLayout<Props> = ({
                 {product?.description}
               </div>
             </div>
-            <div className="flex justify-between items-center my-4">
+            <div className="flex items-center justify-between my-4">
               <div className="">
-                <p className="text-xl text-blue-gray-800 font-semibold">
+                <p className="text-xl font-semibold text-blue-gray-800">
                   Price
                 </p>
                 <p className="text-lg font-medium">${product.price}</p>
               </div>
               <div className="space-y-1">
                 <div className=" text-end">
-                  <p className="text-xl text-blue-gray-800 font-semibold">
+                  <p className="text-xl font-semibold text-blue-gray-800">
                     Quantity
                   </p>
                 </div>
@@ -155,7 +155,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                   >
                     <MinusIcon />
                   </IconButton>
-                  <IconButton className="rounded-none pointer-events-none text-base">
+                  <IconButton className="text-base rounded-none pointer-events-none">
                     {quantity}
                   </IconButton>
                   <IconButton
@@ -175,19 +175,21 @@ const ProductPage: NextPageWithLayout<Props> = ({
         {/* similar items */}
         <div className="mt-10">
           <div>
-            <h3 className="text-2xl text-blue-gray-800 font-bold uppercase py-10 text-center md:text-3xl">
+            <h3 className="py-10 text-2xl font-bold text-center uppercase text-blue-gray-800 md:text-3xl">
               Discover similar items
             </h3>
-            <div className="grid w-max grid-cols-1 lg:grid-cols-2   mx-auto gap-10">
-              {relatedProducts.map(({ id, title, images, price }) => (
-                <CardProduct
-                  key={id}
-                  title={title}
-                  id={id}
-                  images={images}
-                  price={price}
-                />
-              ))}
+            <div className="grid grid-cols-1 gap-10 mx-auto w-max lg:grid-cols-2">
+              {relatedProducts
+                .filter((related) => related.id !== product.id)
+                .map(({ id, title, images, price }) => (
+                  <CardProduct
+                    key={id}
+                    title={title}
+                    id={id}
+                    images={images}
+                    price={price}
+                  />
+                ))}
             </div>
           </div>
         </div>

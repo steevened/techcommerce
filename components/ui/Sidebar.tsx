@@ -13,12 +13,16 @@ interface Props {
   inputValue: string;
   setInputValue: (value: string) => void;
   categories: Category[];
+  filterByCategories: number[];
+  setFilterByCategories: (value: number[]) => void;
 }
 
 export const Sidebar: FC<Props> = ({
   inputValue,
   setInputValue,
   categories,
+  filterByCategories,
+  setFilterByCategories,
 }) => {
   const [open, setOpen] = useState(0);
 
@@ -76,7 +80,24 @@ export const Sidebar: FC<Props> = ({
             <div className="flex flex-col">
               {categories.map((category) => (
                 <label key={category.id} htmlFor={String(category.id)}>
-                  <Checkbox id={String(category.id)} label={category.name} />
+                  <Checkbox
+                    id={String(category.id)}
+                    label={category.name}
+                    value={category.id}
+                    checked={filterByCategories.includes(category.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setFilterByCategories([
+                          ...filterByCategories,
+                          category.id,
+                        ]);
+                      } else {
+                        setFilterByCategories(
+                          filterByCategories.filter((id) => id !== category.id)
+                        );
+                      }
+                    }}
+                  />
                 </label>
               ))}
             </div>

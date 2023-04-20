@@ -21,6 +21,7 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
   const { setSidebarOpen } = useContext(UIContext);
   const [inputValue, setInputValue] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
+  const [filterByCategories, setFilterByCategories] = useState<number[]>([]);
 
   useEffect(() => {
     const categories = products.reduce((acc, product) => {
@@ -34,15 +35,19 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
     setCategories(categories);
   }, [products]);
 
+  console.log(filterByCategories);
+
   return (
     <main className="">
       <Sidebar
         inputValue={inputValue}
         setInputValue={setInputValue}
         categories={categories}
+        filterByCategories={filterByCategories}
+        setFilterByCategories={setFilterByCategories}
       />
       <div className="py-5 md:ml-72">
-        <div className=" md:hidden  mx-auto flex justify-center py-5 ">
+        <div className="flex justify-center py-5 mx-auto md:hidden">
           <Button
             onClick={() => setSidebarOpen(true)}
             className="flex items-center gap-2 "
@@ -53,10 +58,15 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
             Filter
           </Button>
         </div>
-        <div className="grid  grid-cols-1 xl:grid-cols-2  mx-auto gap-10 px-5 place-items-center max-w-4xl">
+        <div className="grid max-w-4xl grid-cols-1 gap-10 px-5 mx-auto xl:grid-cols-2 place-items-center">
           {products
             .filter((product) =>
               product.title.toLowerCase().includes(inputValue.toLowerCase())
+            )
+            .filter((product) =>
+              filterByCategories.length === 0
+                ? true
+                : filterByCategories.includes(product.category.id)
             )
             .map(({ id, title, images, price }) => (
               <CardProduct
