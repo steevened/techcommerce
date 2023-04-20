@@ -3,7 +3,7 @@ import { NavbarComponent } from './Navbar';
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="bg-white text-blue-gray-700">
+    <div className="bg-white text-blue-gray-700 relative">
       <NavbarComponent />
       <main>{children}</main>
     </div>
