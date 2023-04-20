@@ -15,6 +15,7 @@ import { ProductsResponse } from '@/lib/interfaces/products.interface';
 import getProductById from '@/lib/hooks/useProducts';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { CardProduct } from '@/components/ui/CardProduct';
+import { toast } from 'sonner';
 
 interface Props {
   product: ProductsResponse;
@@ -168,7 +169,14 @@ const ProductPage: NextPageWithLayout<Props> = ({
               </div>
             </div>
             <div>
-              <Button fullWidth>Add to cart</Button>
+              <Button
+                fullWidth
+                onClick={() => {
+                  toast.error('Please login to add products to cart');
+                }}
+              >
+                Add to cart
+              </Button>
             </div>
           </div>
         </div>

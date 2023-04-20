@@ -15,6 +15,10 @@ interface Props {
   categories: Category[];
   filterByCategories: number[];
   setFilterByCategories: (value: number[]) => void;
+  minPrice: number;
+  setMinPrice: (value: number) => void;
+  maxPrice: number;
+  setMaxPrice: (value: number) => void;
 }
 
 export const Sidebar: FC<Props> = ({
@@ -23,6 +27,10 @@ export const Sidebar: FC<Props> = ({
   categories,
   filterByCategories,
   setFilterByCategories,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
 }) => {
   const [open, setOpen] = useState(0);
 
@@ -64,8 +72,20 @@ export const Sidebar: FC<Props> = ({
           </AccordionHeader>
           <AccordionBody>
             <div className="space-y-5">
-              <Input variant="outlined" label="From" type="number" />
-              <Input variant="outlined" label="To" type="number" />
+              <Input
+                variant="outlined"
+                label="From"
+                type="number"
+                // value={minPrice}
+                onChange={(e) => setMinPrice(Number(e.target.value))}
+              />
+              <Input
+                variant="outlined"
+                label="To"
+                type="number"
+                // value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+              />
             </div>
           </AccordionBody>
         </Accordion>

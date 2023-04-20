@@ -5,6 +5,7 @@ import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
+import { Toaster } from 'sonner';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,7 +23,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <QueryClientProvider client={queryClient}>
       <UIProvider>
-        <ThemeProvider>{getLayout(<Component {...pageProps} />)}</ThemeProvider>
+        <ThemeProvider>
+          <Toaster richColors closeButton />
+          {getLayout(<Component {...pageProps} />)}
+        </ThemeProvider>
       </UIProvider>
     </QueryClientProvider>
   );

@@ -22,7 +22,7 @@ export const NavbarComponent = () => {
   }, []);
 
   const navList = (
-    <ul className="flex flex-col gap-2 mt-2 mb-4 md:mb-0 md:mt-0 md:flex-row md:items-center  ">
+    <ul className="flex flex-col gap-2 mt-2 mb-4 md:mb-0 md:mt-0 md:flex-row md:items-center ">
       <li>
         <Button
           fullWidth={openNav}
@@ -52,7 +52,7 @@ export const NavbarComponent = () => {
 
   return (
     <>
-      <Navbar className="sticky inset-0 z-10 max-w-full px-4 py-2 rounded-none h-max md:px-8 md:py-4 z-50">
+      <Navbar className="sticky inset-0 z-50 max-w-full px-4 py-2 rounded-none h-max md:px-8 md:py-4">
         <div className="flex items-center justify-between text-light-blue-500">
           <Link href="/" className="mr-4 text-xl font-semibold">
             TechCommerce

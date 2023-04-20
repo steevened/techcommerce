@@ -22,6 +22,8 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
   const [inputValue, setInputValue] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [filterByCategories, setFilterByCategories] = useState<number[]>([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
 
   useEffect(() => {
     const categories = products.reduce((acc, product) => {
@@ -35,7 +37,7 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
     setCategories(categories);
   }, [products]);
 
-  console.log(filterByCategories);
+  // console.log(minPrice, maxPrice);
 
   return (
     <main className="">
@@ -45,6 +47,10 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
         categories={categories}
         filterByCategories={filterByCategories}
         setFilterByCategories={setFilterByCategories}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
       />
       <div className="py-5 md:ml-72">
         <div className="flex justify-center py-5 mx-auto md:hidden">
@@ -67,6 +73,10 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
               filterByCategories.length === 0
                 ? true
                 : filterByCategories.includes(product.category.id)
+            )
+            .filter((product) => Number(product.price) >= minPrice)
+            .filter((product) =>
+              maxPrice === 0 ? true : Number(product.price) <= maxPrice
             )
             .map(({ id, title, images, price }) => (
               <CardProduct
