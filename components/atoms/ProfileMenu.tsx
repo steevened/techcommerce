@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ChevronDownIcon, PowerIcon, ShopIcon, UserIcon } from './Svg';
 import {
   Avatar,
@@ -9,24 +9,15 @@ import {
   MenuList,
   Typography,
 } from '@material-tailwind/react';
-const profileMenuItems = [
-  {
-    label: 'Account',
-    icon: <UserIcon />,
-  },
-  // {
-  //   label: 'Purchases',
-  //   icon: <ShopIcon />,
-  // },
-  {
-    label: 'Sign Out',
-    icon: <PowerIcon />,
-  },
-];
+import { UIContext } from '@/context/ui/UIContext';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 export const ProfileMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const closeMenu = () => setIsMenuOpen(false);
+  // const closeMenu = () => setIsMenuOpen(false);
+  const { setUserLoggedIn } = useContext(UIContext);
+  const router = useRouter();
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -47,34 +38,31 @@ export const ProfileMenu = () => {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon }, key) => {
-          const isLastItem = key === profileMenuItems.length - 1;
-          return (
-            <MenuItem
-              key={label}
-              onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? 'hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10'
-                  : ''
-              }`}
-            >
-              {icon && (
-                <span className={`${isLastItem && 'text-red-500'}`}>
-                  {icon}
-                </span>
-              )}
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? 'red' : 'inherit'}
-              >
-                {label}
-              </Typography>
-            </MenuItem>
-          );
-        })}
+        {/* <MenuItem className="flex items-center gap-2 rounded">
+          <UserIcon />
+          <Typography as="span" variant="small" className="font-normal">
+            Account
+          </Typography>
+        </MenuItem> */}
+        <MenuItem
+          role="button"
+          onClick={() => {
+            Cookies.remove('token');
+            setUserLoggedIn(false);
+            router.push('/auth/login');
+          }}
+          className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10 text-red-500"
+        >
+          <PowerIcon />
+          <Typography
+            as="span"
+            variant="small"
+            className="font-normal"
+            // color="red"
+          >
+            Sign Out
+          </Typography>
+        </MenuItem>
       </MenuList>
     </Menu>
   );

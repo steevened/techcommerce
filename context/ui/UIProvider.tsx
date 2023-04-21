@@ -1,17 +1,16 @@
-import { FC, PropsWithChildren, useReducer } from 'react';
+import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import { UIContext } from './UIContext';
 import { uiReducer } from './uiReducer';
+import Cookies from 'js-cookie';
 
 export interface UIState {
   sidebarOpen: boolean;
-  loginDialogOpen: boolean;
-  signupDialogOpen: boolean;
+  isUserLoggedIn: boolean;
 }
 
 const UI_INITIAL_STATE: UIState = {
   sidebarOpen: false,
-  loginDialogOpen: false,
-  signupDialogOpen: false,
+  isUserLoggedIn: false,
 };
 
 export const UIProvider: FC<PropsWithChildren> = ({ children }) => {
@@ -21,23 +20,27 @@ export const UIProvider: FC<PropsWithChildren> = ({ children }) => {
     dispatch({ type: 'SET_SIDEBAR_OPEN', payload: value });
   };
 
-  const setLoginDialogOpen = (value: boolean) => {
-    dispatch({ type: 'SET_LOGIN_DIALOG_OPEN', payload: value });
+  const setUserLoggedIn = (value: boolean) => {
+    dispatch({ type: 'SET_USER_LOGGED_IN', payload: value });
   };
 
-  const setSignupDialogOpen = (value: boolean) => {
-    dispatch({ type: 'SET_SIGNUP_DIALOG_OPEN', payload: value });
-  };
+  useEffect(() => {
+    const token = Cookies.get('token');
+
+    if (!token) {
+      setUserLoggedIn(false);
+    } else {
+      setUserLoggedIn(true);
+    }
+  }, []);
 
   return (
     <UIContext.Provider
       value={{
         sidebarOpen: state.sidebarOpen,
-        loginDialogOpen: state.loginDialogOpen,
-        signupDialogOpen: state.signupDialogOpen,
+        isUserLoggedIn: state.isUserLoggedIn,
+        setUserLoggedIn,
         setSidebarOpen,
-        setLoginDialogOpen,
-        setSignupDialogOpen,
       }}
     >
       {children}

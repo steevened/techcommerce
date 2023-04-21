@@ -10,7 +10,6 @@ import { NavList } from './NavList';
 
 export const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);
-  const [isUserLogedIn, setIsUserLogedIn] = useState(false);
 
   useEffect(() => {
     window.addEventListener(
@@ -28,7 +27,7 @@ export const NavbarComponent = () => {
           </Link>
           <div className="flex items-center gap-4">
             <div className="hidden mr-4 md:block">
-              <NavList openNav={openNav} isUserLogedIn={isUserLogedIn} />
+              <NavList openNav={openNav} />
             </div>
 
             <IconButton
@@ -71,7 +70,7 @@ export const NavbarComponent = () => {
           </div>
         </div>
         <MobileNav open={openNav} className="md:hidden">
-          <NavList openNav={openNav} isUserLogedIn={isUserLogedIn} />
+          <NavList openNav={openNav} />
         </MobileNav>
       </Navbar>
     </>

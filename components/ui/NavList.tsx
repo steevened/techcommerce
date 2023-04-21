@@ -4,14 +4,15 @@ import { CartIcon, PurchaseIcon } from '../atoms/Svg';
 import { FC, useContext } from 'react';
 import { ProfileMenu } from '../atoms/ProfileMenu';
 import { UIContext } from '@/context/ui/UIContext';
+import { useRouter } from 'next/router';
 
 interface Props {
   openNav: boolean;
-  isUserLogedIn: boolean;
 }
 
-export const NavList: FC<Props> = ({ openNav, isUserLogedIn }) => {
-  const { setLoginDialogOpen, setSignupDialogOpen } = useContext(UIContext);
+export const NavList: FC<Props> = ({ openNav }) => {
+  const router = useRouter();
+  const { isUserLoggedIn } = useContext(UIContext);
 
   return (
     <ul
@@ -19,7 +20,7 @@ export const NavList: FC<Props> = ({ openNav, isUserLogedIn }) => {
         openNav ? '' : ''
       }`}
     >
-      {isUserLogedIn ? (
+      {isUserLoggedIn ? (
         <>
           <li>
             <Button
@@ -53,7 +54,7 @@ export const NavList: FC<Props> = ({ openNav, isUserLogedIn }) => {
         <>
           <li>
             <Button
-              onClick={() => setLoginDialogOpen(true)}
+              onClick={() => router.push('/auth/login')}
               fullWidth={openNav}
               variant="gradient"
               color="light-blue"
@@ -63,7 +64,7 @@ export const NavList: FC<Props> = ({ openNav, isUserLogedIn }) => {
           </li>
           <li>
             <Button
-              onClick={() => setSignupDialogOpen(true)}
+              onClick={() => router.push('/auth/signup')}
               fullWidth={openNav}
               variant="outlined"
               className="focus:ring-0"
