@@ -51,7 +51,6 @@ const LoginPage: NextPageWithLayout = () => {
         error: 'Invalid credentials, please try again',
       });
       const response = await logIn(data);
-      console.log(response);
       if (response.status === 200) {
         setData({
           email: '',
@@ -59,6 +58,7 @@ const LoginPage: NextPageWithLayout = () => {
         });
         setIsError(false);
         setUserLoggedIn(true);
+        Cookies.set('token', response.data.token);
         router.push('/');
       } else {
         setIsError(true);

@@ -26,7 +26,6 @@ export const UIProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const token = Cookies.get('token');
-
     if (!token) {
       setUserLoggedIn(false);
     } else {
