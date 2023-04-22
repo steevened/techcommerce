@@ -15,7 +15,10 @@ import {
   AddProductToCart,
   ProductsResponse,
 } from '@/lib/interfaces/products.interface';
-import getProductById, { addProductToCart } from '@/lib/hooks/useProducts';
+import getProductById, {
+  useAddProductToCart,
+  useCartProducts,
+} from '@/lib/hooks/useProducts';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { CardProduct } from '@/components/ui/CardProduct';
 import { toast } from 'sonner';
@@ -32,6 +35,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
+  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
   const { isUserLoggedIn } = useContext(UIContext);
 
   const handleSliderBack = () => {
@@ -51,27 +55,39 @@ const ProductPage: NextPageWithLayout<Props> = ({
     container.style.transform = `translateX(-${newPosition}px)`;
   }, [imageIndex]);
 
+  const { mutateAsync } = useAddProductToCart();
+
+  const { data } = useCartProducts();
+
+  useEffect(() => {
+    if (data) {
+      const productInCart = data.find((item) => item.product.id === product.id);
+      if (productInCart) {
+        setIsAddedToCart(true);
+      }
+    }
+  }, [data, product.id]);
+
   const handleAddProductToCart = async (data: AddProductToCart) => {
     if (!isUserLoggedIn) {
       return toast.error('Please login to add products to cart');
     }
-    const promise = async () => await addProductToCart(data);
 
     try {
-      // const res = toast.promise(promise, {
-      //   loading: 'Loading...',
-      //   success: 'Product added to the cart',
-      //   error: 'Something wrong, please try again',
-      // });
-      // console.log(res);
-      console.log(data);
+      toast.promise(mutateAsync(data), {
+        loading: 'Loading...',
+        success: 'Product added to the cart',
+        error: (error) => {
+          return `${error.response.data.error}`;
+        },
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="max-w-screen-xl px-5 mx-auto my-5">
+    <div className="max-w-screen-xl w-screen overflow-x-hidden px-5 mx-auto my-5">
       <Breadcrumbs>
         <Link href="/" className="opacity-60">
           <HomeIcon />
@@ -172,7 +188,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                 <div className="flex">
                   <IconButton
                     className="rounded-none"
-                    disabled={quantity <= 1}
+                    disabled={quantity <= 1 || isAddedToCart}
                     onClick={() => {
                       if (quantity <= 1) return;
                       setQuantity(quantity - 1);
@@ -180,10 +196,14 @@ const ProductPage: NextPageWithLayout<Props> = ({
                   >
                     <MinusIcon />
                   </IconButton>
-                  <IconButton className="text-base rounded-none pointer-events-none">
+                  <IconButton
+                    disabled={isAddedToCart}
+                    className="text-base rounded-none pointer-events-none"
+                  >
                     {quantity}
                   </IconButton>
                   <IconButton
+                    disabled={isAddedToCart}
                     className="rounded-none"
                     onClick={() => setQuantity(quantity + 1)}
                   >
@@ -195,6 +215,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
             <div>
               <Button
                 fullWidth
+                disabled={isAddedToCart}
                 onClick={() =>
                   handleAddProductToCart({
                     productId: product.id,
@@ -202,7 +223,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                   })
                 }
               >
-                Add to cart
+                {isAddedToCart ? 'Added To Cart' : 'Add to cart'}
               </Button>
             </div>
           </div>
@@ -213,7 +234,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
             <h3 className="py-10 text-2xl font-bold text-center uppercase text-blue-gray-800 md:text-3xl">
               Discover similar items
             </h3>
-            <div className="grid grid-cols-1 gap-10 mx-auto w-max lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-10 mx-auto place-items-center lg:grid-cols-2">
               {relatedProducts
                 .filter((related) => related.id !== product.id)
                 .map(({ id, title, images, price }) => (

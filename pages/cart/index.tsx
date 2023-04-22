@@ -1,47 +1,29 @@
-import { ReactElement, useContext, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import { NextPageWithLayout } from '../_app';
 import { Layout } from '@/components/ui/Layout';
-import { CartResponse } from '@/lib/interfaces/products.interface';
-import { getCartProducts } from '@/lib/hooks/useProducts';
-import { GetServerSideProps } from 'next';
-import Image from 'next/image';
-import { IconButton } from '@material-tailwind/react';
-import { CloseIcon, MinusIcon, PlusIcon } from '@/components/atoms/Svg';
-// import { UIContext } from '@/context/ui/UIContext';
+import { useCartProducts } from '@/lib/hooks/useProducts';
+import ProductOnCart from '@/components/ui/ProductOnCart';
 
 const CartPage: NextPageWithLayout = () => {
-  const [cart, setCart] = useState<CartResponse[]>([]);
+  const { data, isLoading, error, isError } = useCartProducts();
 
-  useEffect(() => {
-    getCartProducts().then((res) => setCart(res.data));
-  }, []);
-  console.log(cart);
-  // const { isUserLoggedIn } = useContext(UIContext);
+  console.log(data);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>{`${error}`}</div>;
 
   return (
     <div className="max-w-screen-2xl px-5 mx-auto my-5">
+      <h1 className="text-2xl font-semibold">Your Cart</h1>
       <div className="flex flex-col lg:flex-row gap-2  ">
         <div className="lg:w-2/3  py-10 flex flex-col gap-5">
-          {cart.map((product) => (
-            <div
-              className="shadow-app rounded-md relative shadow-after flex  p-2  gap-2"
+          {data?.map((product) => (
+            <ProductOnCart
+              id={product.id}
+              product={product.product}
+              quantity={product.quantity}
               key={product.id}
-            >
-              <div className="w-16 aspect-square  grid place-content-center object-contain">
-                <Image
-                  src={product.product.images[0].url}
-                  alt={product.product.description}
-                  width={100}
-                  height={100}
-                />
-              </div>
-              <div>
-                <h3 className=" font-semibold">{product.product.title}</h3>
-                <p className="text-blue-gray-500">
-                  ${Number(product.product.price) * product.quantity}
-                </p>
-              </div>
-            </div>
+            />
           ))}
         </div>
         <div className="lg:w-1/3 border border-blue-500 py-10"></div>

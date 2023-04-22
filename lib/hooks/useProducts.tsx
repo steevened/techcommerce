@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { techApi } from '../api/techApi';
 import {
   ProductsResponse,
@@ -22,9 +22,62 @@ export const addProductToCart = async (data: AddProductToCart) => {
   return res;
 };
 
-export const getCartProducts = async () => {
-  const data = await techApi.get('/cart');
+export const useAddProductToCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation(addProductToCart, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('cart');
+    },
+  });
+};
+
+const getCartProducts = async () => {
+  const { data } = await techApi.get<CartResponse[]>('/cart');
   return data;
+};
+
+export const useCartProducts = () => {
+  const { data, error, isError, isLoading } = useQuery(
+    ['cart'],
+    getCartProducts
+  );
+
+  return { data, error, isError, isLoading };
+};
+
+const deleteProductToCart = async (id: number) => {
+  const res = await techApi.delete(`/cart/${id}`);
+  return res;
+};
+
+export const useDeleteProductToCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation(deleteProductToCart, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('cart');
+    },
+  });
+};
+
+const updateProductQuantity = ({
+  id,
+  quantity,
+}: {
+  id: number;
+  quantity: number;
+}) => {
+  const res = techApi.put(`/cart/${id}`, { quantity });
+  return res;
+};
+
+export const useUpdateProductQuantity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(updateProductQuantity, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('cart');
+    },
+  });
 };
 
 export default getProductById;
