@@ -9,6 +9,7 @@ import {
   useUpdateProductQuantity,
 } from '@/lib/hooks/useProducts';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface Props {
   id: number;
@@ -63,13 +64,18 @@ const ProductOnCart: FC<Props> = ({ id, product, quantity }) => {
           className="object-contain w-full h-full"
         />
       </div>
-      <div className="grow">
-        <h3 className="md:text-xl font-semibold">{product.title}</h3>
+      <div className="">
+        <Link href={`/product/${product.id}`}>
+          <h3 className="md:text-xl font-semibold hover:text-blue-300 duration-200">
+            {product.title}
+          </h3>
+        </Link>
+
         <p className="text-blue-gray-500 md:text-lg">
           ${Number(product.price) * quantity}
         </p>
       </div>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-between  grow">
         <div className="text-end">
           <IconButton
             onClick={handleDeleteProduct}
@@ -81,7 +87,7 @@ const ProductOnCart: FC<Props> = ({ id, product, quantity }) => {
             <CloseIcon />
           </IconButton>
         </div>
-        <div className="flex">
+        <div className="flex justify-end">
           <IconButton
             disabled={quantity <= 1 || isLoading}
             onClick={() => handleQuantity('remove')}

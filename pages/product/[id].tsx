@@ -64,6 +64,8 @@ const ProductPage: NextPageWithLayout<Props> = ({
       const productInCart = data.find((item) => item.product.id === product.id);
       if (productInCart) {
         setIsAddedToCart(true);
+      } else {
+        setIsAddedToCart(false);
       }
     }
   }, [data, product.id]);

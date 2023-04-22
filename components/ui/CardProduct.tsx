@@ -21,7 +21,7 @@ export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
     <div
       role="button"
       onClick={() => router.push(`/product/${id}`)}
-      className="relative flex flex-col w-full max-w-sm rounded-lg aspect-square shadow-app after:absolute after:inset-0 after:shadow-xl after:shadow-black/10 after:pointer-events-none bg-blue-gray-50/10 backdrop-blur-sm after:rounded-lg"
+      className="relative flex flex-col w-full max-w-sm rounded-lg aspect-square shadow-app shadow-after bg-blue-gray-50/10 backdrop-blur-sm after:rounded-lg"
     >
       <div className="relative w-full p-4 aspect-square max-h-64 group">
         <Image
