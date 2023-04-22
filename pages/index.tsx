@@ -15,29 +15,15 @@ import { UIContext } from '@/context/ui/UIContext';
 
 interface Props {
   products: ProductsResponse[];
+  categories: Category[];
 }
 
-const HomePage: NextPageWithLayout<Props> = ({ products }) => {
+const HomePage: NextPageWithLayout<Props> = ({ products, categories }) => {
   const { setSidebarOpen } = useContext(UIContext);
   const [inputValue, setInputValue] = useState('');
-  const [categories, setCategories] = useState<Category[]>([]);
   const [filterByCategories, setFilterByCategories] = useState<number[]>([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-
-  useEffect(() => {
-    const categories = products.reduce((acc, product) => {
-      const { category } = product;
-      const categoryExist = acc.find((c) => c.name === category.name);
-      if (!categoryExist) {
-        return [...acc, category];
-      }
-      return acc;
-    }, [] as Category[]);
-    setCategories(categories);
-  }, [products]);
-
-  // console.log(minPrice, maxPrice);
 
   return (
     <main className="">
@@ -95,8 +81,9 @@ const HomePage: NextPageWithLayout<Props> = ({ products }) => {
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const { data: products } = await techApi.get<ProductsResponse[]>('/products');
+  const { data: categories } = await techApi.get<Category[]>('/categories');
   return {
-    props: { products },
+    props: { products, categories },
   };
 };
 

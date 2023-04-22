@@ -23,28 +23,30 @@ export const NavList: FC<Props> = ({ openNav }) => {
       {isUserLoggedIn ? (
         <>
           <li>
-            <Button
-              fullWidth={openNav}
-              variant="text"
-              color="blue"
-              className="flex items-center gap-1"
-            >
-              <Link href="/" className="flex items-center gap-1">
+            <Link href="/">
+              <Button
+                fullWidth={openNav}
+                variant="text"
+                color="blue"
+                className="flex items-center gap-1"
+              >
                 <PurchaseIcon />
                 Purchases
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </li>
           <li>
-            <Button
-              fullWidth={openNav}
-              variant="text"
-              color="blue"
-              className="flex items-center gap-1"
-            >
-              <CartIcon />
-              Cart
-            </Button>
+            <Link href="/cart">
+              <Button
+                fullWidth={openNav}
+                variant="text"
+                color="blue"
+                className="flex items-center gap-1"
+              >
+                <CartIcon />
+                Cart
+              </Button>
+            </Link>
           </li>
           <span>
             <ProfileMenu />

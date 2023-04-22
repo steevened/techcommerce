@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useContext, useEffect, useRef, useState } from 'react';
 import { NextPageWithLayout } from '../_app';
 import { Layout } from '@/components/ui/Layout';
 import { Breadcrumbs, Button, IconButton } from '@material-tailwind/react';
@@ -11,11 +11,15 @@ import {
 } from '@/components/atoms/Svg';
 import Image from 'next/image';
 import { techApi } from '@/lib/api/techApi';
-import { ProductsResponse } from '@/lib/interfaces/products.interface';
-import getProductById from '@/lib/hooks/useProducts';
+import {
+  AddProductToCart,
+  ProductsResponse,
+} from '@/lib/interfaces/products.interface';
+import getProductById, { addProductToCart } from '@/lib/hooks/useProducts';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { CardProduct } from '@/components/ui/CardProduct';
 import { toast } from 'sonner';
+import { UIContext } from '@/context/ui/UIContext';
 
 interface Props {
   product: ProductsResponse;
@@ -28,6 +32,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
 }) => {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
+  const { isUserLoggedIn } = useContext(UIContext);
 
   const handleSliderBack = () => {
     setImageIndex(imageIndex === 0 ? 2 : imageIndex - 1);
@@ -45,6 +50,25 @@ const ProductPage: NextPageWithLayout<Props> = ({
     const newPosition = imageIndex * (containerWidth / 3);
     container.style.transform = `translateX(-${newPosition}px)`;
   }, [imageIndex]);
+
+  const handleAddProductToCart = async (data: AddProductToCart) => {
+    if (!isUserLoggedIn) {
+      return toast.error('Please login to add products to cart');
+    }
+    const promise = async () => await addProductToCart(data);
+
+    try {
+      // const res = toast.promise(promise, {
+      //   loading: 'Loading...',
+      //   success: 'Product added to the cart',
+      //   error: 'Something wrong, please try again',
+      // });
+      // console.log(res);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="max-w-screen-xl px-5 mx-auto my-5">
@@ -171,9 +195,12 @@ const ProductPage: NextPageWithLayout<Props> = ({
             <div>
               <Button
                 fullWidth
-                onClick={() => {
-                  toast.error('Please login to add products to cart');
-                }}
+                onClick={() =>
+                  handleAddProductToCart({
+                    productId: product.id,
+                    quantity,
+                  })
+                }
               >
                 Add to cart
               </Button>
