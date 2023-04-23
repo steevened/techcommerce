@@ -51,3 +51,9 @@ export interface Product {
   categoryId: number;
   images: Image[];
 }
+
+export interface ProductToDelete {
+  id: number;
+  productId: number;
+  quantity: number;
+}

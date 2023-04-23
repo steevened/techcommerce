@@ -1,13 +1,9 @@
 import { IconButton } from '@material-tailwind/react';
 import { FC, useState } from 'react';
 import { CloseIcon, MinusIcon, PlusIcon } from '../atoms/Svg';
-import { Product } from '@/lib/interfaces/products.interface';
+import { Product, ProductToDelete } from '@/lib/interfaces/products.interface';
 import Image from 'next/image';
-import {
-  useAddProductToCart,
-  useDeleteProductToCart,
-  useUpdateProductQuantity,
-} from '@/lib/hooks/useProducts';
+import { useUpdateProductQuantity } from '@/lib/hooks/useProducts';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -15,33 +11,18 @@ interface Props {
   id: number;
   product: Product;
   quantity: number;
+  handleOpen: () => void;
+  setProductToDelete: (product: ProductToDelete) => void;
 }
 
-const ProductOnCart: FC<Props> = ({ id, product, quantity }) => {
-  const { mutateAsync } = useDeleteProductToCart();
-  const { mutateAsync: addProductToCart } = useAddProductToCart();
+const ProductOnCart: FC<Props> = ({
+  id,
+  product,
+  quantity,
+  handleOpen,
+  setProductToDelete,
+}) => {
   const { mutate, isLoading } = useUpdateProductQuantity();
-
-  const handleDeleteProduct = () => {
-    try {
-      toast.promise(mutateAsync(id), {
-        loading: 'Loading...',
-        success: 'Product deleted',
-        error: 'Something wrong, please try again',
-        action: {
-          label: 'Undo',
-          onClick: () => {
-            addProductToCart({
-              productId: product.id,
-              quantity: quantity,
-            });
-          },
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleQuantity = (type: 'add' | 'remove') => {
     mutate({
@@ -78,7 +59,11 @@ const ProductOnCart: FC<Props> = ({ id, product, quantity }) => {
       <div className="flex flex-col justify-between  grow">
         <div className="text-end">
           <IconButton
-            onClick={handleDeleteProduct}
+            // onClick={handleDeleteProduct}
+            onClick={() => {
+              handleOpen();
+              setProductToDelete({ id, quantity, productId: product.id });
+            }}
             size="sm"
             className="w-6 h-6 rounded-md "
             color="red"

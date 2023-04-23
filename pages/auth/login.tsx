@@ -67,15 +67,6 @@ const LoginPage: NextPageWithLayout = () => {
           password: '',
         });
       }
-      // if (response.status === 401) {
-      //   setIsError(true);
-      //   setData({
-      //     email: '',
-      //     password: '',
-      //   });
-      // } else {
-      //   setIsError(false);
-      // }
     } catch (error) {
       console.log(error);
       setIsError(true);

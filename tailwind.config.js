@@ -14,7 +14,7 @@ module.exports = withMT({
         'app-2': 'inset 0 0 0 1px rgba(100, 100, 100, 0.2)',
         'app-left': '-1px 0 0 0 rgba(100, 100, 100, 0.1)',
         'app-right': '1px 0 0 0 rgba(100, 100, 100, 0.1)',
-        'app-top': '0 -1px 0 0 rgba(100, 100, 100, 0.1)',
+        'app-top': '0 -1px 0 0 rgba(100, 100, 100, 0.2)',
       },
       colors: {
         sky: {
