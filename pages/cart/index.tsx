@@ -109,7 +109,9 @@ const CartPage: NextPageWithLayout = () => {
               </div>
             </div>
             <div className="mt-2">
-              <Button fullWidth>CHECKOUT</Button>
+              <Button disabled={data?.length === 0} fullWidth>
+                CHECKOUT
+              </Button>
             </div>
           </div>
         </div>

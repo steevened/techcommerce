@@ -32,7 +32,7 @@ const ConfirmDeleteProductModal: FC<Props> = ({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className="bg-white rounded-md shadow-lg p-4 w-96"
+          className="bg-white rounded-md shadow-lg p-4 w-96 mx-4"
         >
           <h2 className="text-xl font-semibold pb-2">Are you sure?</h2>
 

@@ -23,7 +23,7 @@ export const NavList: FC<Props> = ({ openNav }) => {
       {isUserLoggedIn ? (
         <>
           <li>
-            <Link href="/">
+            <Link href="/purchases">
               <Button
                 fullWidth={openNav}
                 variant="text"

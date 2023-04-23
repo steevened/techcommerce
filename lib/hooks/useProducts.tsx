@@ -4,6 +4,7 @@ import {
   ProductsResponse,
   AddProductToCart,
   CartResponse,
+  PurchasesResponse,
 } from '../interfaces/products.interface';
 
 export const getProductById = async (id: string): Promise<ProductsResponse> => {
@@ -78,6 +79,20 @@ export const useUpdateProductQuantity = () => {
       queryClient.invalidateQueries('cart');
     },
   });
+};
+
+const getUserPurchases = async () => {
+  const res = await techApi.get<PurchasesResponse[]>('/purchases');
+  return res.data;
+};
+
+export const useUserPurchases = () => {
+  const { data, error, isError, isLoading } = useQuery(
+    ['purchases'],
+    getUserPurchases
+  );
+
+  return { data, error, isError, isLoading };
 };
 
 export default getProductById;
