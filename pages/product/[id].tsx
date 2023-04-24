@@ -37,6 +37,9 @@ const ProductPage: NextPageWithLayout<Props> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
   const { isUserLoggedIn } = useContext(UIContext);
+  const { data } = useCartProducts();
+  const { mutateAsync: addProductToCart } = useAddProductToCart();
+  const { setProductsOnCart, productsOnCart } = useContext(UIContext);
 
   const handleSliderBack = () => {
     setImageIndex(imageIndex === 0 ? 2 : imageIndex - 1);
@@ -44,6 +47,30 @@ const ProductPage: NextPageWithLayout<Props> = ({
 
   const handleSlider = () => {
     setImageIndex(imageIndex === 2 ? 0 : imageIndex + 1);
+  };
+
+  const handleAddProductToCart = async (product: AddProductToCart) => {
+    if (!isUserLoggedIn) {
+      return toast.error('Please login to add products to cart');
+    }
+
+    try {
+      toast.promise(addProductToCart(product), {
+        loading: 'Loading...',
+        success: () => {
+          return 'Product added to the cart';
+        },
+        error: (error) => {
+          if (error.response?.data.error) {
+            return `${error.response.data.error}`;
+          } else {
+            return `${error}`;
+          }
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,10 +81,6 @@ const ProductPage: NextPageWithLayout<Props> = ({
     const newPosition = imageIndex * (containerWidth / 3);
     container.style.transform = `translateX(-${newPosition}px)`;
   }, [imageIndex]);
-
-  const { mutateAsync } = useAddProductToCart();
-
-  const { data } = useCartProducts();
 
   useEffect(() => {
     if (data) {
@@ -70,26 +93,8 @@ const ProductPage: NextPageWithLayout<Props> = ({
     }
   }, [data, product.id]);
 
-  const handleAddProductToCart = async (data: AddProductToCart) => {
-    if (!isUserLoggedIn) {
-      return toast.error('Please login to add products to cart');
-    }
-
-    try {
-      toast.promise(mutateAsync(data), {
-        loading: 'Loading...',
-        success: 'Product added to the cart',
-        error: (error) => {
-          return `${error.response.data.error}`;
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
-    <div className="max-w-screen-xl w-screen overflow-x-hidden px-5 mx-auto my-5">
+    <div className="w-screen max-w-screen-xl px-5 mx-auto my-5 overflow-x-hidden">
       <Breadcrumbs>
         <Link href="/" className="opacity-60">
           <HomeIcon />

@@ -7,6 +7,7 @@ import {
 } from '@material-tailwind/react';
 import Link from 'next/link';
 import { NavList } from './NavList';
+import { useCartProducts } from '@/lib/hooks/useProducts';
 
 export const NavbarComponent = () => {
   const [openNav, setOpenNav] = useState(false);

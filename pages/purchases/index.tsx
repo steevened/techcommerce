@@ -13,11 +13,13 @@ const PurchasesPage: NextPageWithLayout = () => {
   if (isLoading) return <Loader />;
   if (isError) return <p>{`${error}`}</p>;
 
+  console.log(data);
+
   return (
-    <div className="max-w-screen-2xl px-5 mx-auto my-5">
+    <div className="px-5 mx-auto my-5 max-w-screen-2xl">
       <h1 className="text-2xl font-semibold">Your Purchases</h1>
 
-      <div className="space-y-5 mt-5">
+      <div className="flex flex-col-reverse mt-5 space-y-5">
         {data?.map((purchase) => (
           <Purchase purchase={purchase} key={purchase.id} />
         ))}

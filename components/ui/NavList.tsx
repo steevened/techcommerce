@@ -5,6 +5,7 @@ import { FC, useContext } from 'react';
 import { ProfileMenu } from '../atoms/ProfileMenu';
 import { UIContext } from '@/context/ui/UIContext';
 import { useRouter } from 'next/router';
+import { useCartProducts } from '@/lib/hooks/useProducts';
 
 interface Props {
   openNav: boolean;
@@ -13,6 +14,8 @@ interface Props {
 export const NavList: FC<Props> = ({ openNav }) => {
   const router = useRouter();
   const { isUserLoggedIn } = useContext(UIContext);
+
+  const { productsOnCart, setProductsOnCart } = useContext(UIContext);
 
   return (
     <ul
@@ -35,18 +38,21 @@ export const NavList: FC<Props> = ({ openNav }) => {
               </Button>
             </Link>
           </li>
-          <li>
+          <li className="relative ">
             <Link href="/cart">
               <Button
                 fullWidth={openNav}
                 variant="text"
                 color="blue"
-                className="flex items-center gap-1"
+                className="relative flex items-center gap-1 "
               >
                 <CartIcon />
                 Cart
               </Button>
             </Link>
+            <span className="absolute grid px-[9px] text-lg text-white bg-blue-500 rounded-full place-content-center font-semibold -right-1 -bottom-2">
+              {productsOnCart}
+            </span>
           </li>
           <span>
             <ProfileMenu />

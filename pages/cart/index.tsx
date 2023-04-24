@@ -1,9 +1,10 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { NextPageWithLayout } from '../_app';
 import { Layout } from '@/components/ui/Layout';
 import {
   useAddProductToCart,
   useCartProducts,
+  useCreatePurchase,
   useDeleteProductToCart,
 } from '@/lib/hooks/useProducts';
 import ProductOnCart from '@/components/ui/ProductOnCart';
@@ -12,25 +13,29 @@ import Loader from '@/components/ui/Loader';
 import { toast } from 'sonner';
 import ConfirmDeleteProductModal from '@/components/ui/ConfirmDeleteProductModal';
 import { ProductToDelete } from '@/lib/interfaces/products.interface';
+import { UIContext } from '@/context/ui/UIContext';
 
 const CartPage: NextPageWithLayout = () => {
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState<boolean>(false);
   const [productToDelete, setProductToDelete] =
     useState<ProductToDelete | null>(null);
+  const [total, setTotal] = useState<number>(0);
   const handleOpen = () => setIsDialogDeleteOpen((cur) => !cur);
+  const { mutateAsync: createPurchase } = useCreatePurchase();
   const { mutateAsync: addProductToCart } = useAddProductToCart();
   const { mutateAsync } = useDeleteProductToCart();
 
   const { data, isLoading, error, isError } = useCartProducts();
-  const [total, setTotal] = useState<number>(0);
+  const { setProductsOnCart, productsOnCart } = useContext(UIContext);
 
   const handleDeleteProduct = () => {
     if (!productToDelete) return;
-    console.log(productToDelete);
     try {
       toast.promise(mutateAsync(productToDelete.id), {
         loading: 'Loading...',
-        success: 'Product deleted',
+        success: () => {
+          return 'Product deleted';
+        },
         error: 'Something wrong, please try again',
         action: {
           label: 'Undo',
@@ -43,6 +48,18 @@ const CartPage: NextPageWithLayout = () => {
         },
       });
       // console.log(id, quant);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePurchaseProduct = () => {
+    try {
+      toast.promise(createPurchase, {
+        loading: 'Loading...',
+        success: 'Cart purchased',
+        error: 'Something wrong, please try again',
+      });
     } catch (error) {
       console.log(error);
     }
@@ -71,10 +88,12 @@ const CartPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="max-w-screen-2xl px-5 mx-auto my-5">
-        <h1 className="text-2xl font-semibold">Your Cart</h1>
-        <div className="flex flex-col lg:flex-row gap-2  py-5">
-          <div className="lg:w-2/3  flex flex-col gap-5">
+      <div className="px-5 mx-auto my-5 max-w-screen-2xl">
+        <h1 className="text-2xl font-semibold">
+          {data?.length === 0 ? 'Your Cart is empty' : 'Your Cart'}
+        </h1>
+        <div className="flex flex-col gap-2 py-5 lg:flex-row">
+          <div className="flex flex-col gap-5 lg:w-2/3">
             {data?.map((product) => (
               <ProductOnCart
                 id={product.id}
@@ -86,30 +105,34 @@ const CartPage: NextPageWithLayout = () => {
               />
             ))}
           </div>
-          <div className="lg:w-1/3  shadow-app rounded-md relative shadow-after py-5 h-min px-4">
-            <h2 className="text-xl font-semibold text-center pb-4">
+          <div className="relative px-4 py-5 rounded-md lg:w-1/3 shadow-app shadow-after h-min">
+            <h2 className="pb-4 text-xl font-semibold text-center">
               Order Summary
             </h2>
             <div className="shadow-app-top text-blue-gray-400">
-              <div className="flex justify-between items-center py-2">
+              <div className="flex items-center justify-between py-2">
                 <p className="">Subtotal</p>
                 <p className="">${total}</p>
               </div>
               <div>
-                <div className="flex justify-between items-center py-2">
+                <div className="flex items-center justify-between py-2">
                   <p className="">Shipping</p>
                   <p className="">Free</p>
                 </div>
               </div>
             </div>
             <div className="shadow-app-top text-blue-gray-400">
-              <div className="flex justify-between items-center py-2">
+              <div className="flex items-center justify-between py-2">
                 <p className="font-semibold">Total</p>
                 <p className="font-semibold">${total}</p>
               </div>
             </div>
             <div className="mt-2">
-              <Button disabled={data?.length === 0} fullWidth>
+              <Button
+                onClick={handlePurchaseProduct}
+                disabled={data?.length === 0}
+                fullWidth
+              >
                 CHECKOUT
               </Button>
             </div>
