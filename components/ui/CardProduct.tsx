@@ -1,11 +1,16 @@
-import { Image as image } from '@/lib/interfaces/products.interface';
+import {
+  AddProductToCart,
+  Image as image,
+} from '@/lib/interfaces/products.interface';
 import { Button, IconButton } from '@material-tailwind/react';
 import Image from 'next/image';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { CartIcon } from '../atoms/Svg';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { toast } from 'sonner';
+import { useAddProductToCart } from '@/lib/hooks/useProducts';
+import { UIContext } from '@/context/ui/UIContext';
 
 interface Props {
   title: string;
@@ -16,6 +21,33 @@ interface Props {
 
 export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
   const router = useRouter();
+  const { isUserLoggedIn } = useContext(UIContext);
+
+  const { mutateAsync: addProductToCart } = useAddProductToCart();
+
+  const handleAddProductToCart = async (product: AddProductToCart) => {
+    if (!isUserLoggedIn) {
+      return toast.error('Please login to add products to cart');
+    }
+
+    try {
+      toast.promise(addProductToCart(product), {
+        loading: 'Loading...',
+        success: () => {
+          return 'Product added to the cart';
+        },
+        error: (error) => {
+          if (error.response?.data.error) {
+            return `${error.response.data.error}`;
+          } else {
+            return `${error}`;
+          }
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div
@@ -47,8 +79,8 @@ export const CardProduct: FC<Props> = ({ title, id, price, images }) => {
         <div className="flex items-end ">
           <IconButton
             onClick={(e) => {
-              toast.error('Please login to add products to cart');
               e.stopPropagation();
+              handleAddProductToCart({ productId: id, quantity: 1 });
             }}
             className="p-3 rounded-full whitespace-nowrap aspect-square"
           >

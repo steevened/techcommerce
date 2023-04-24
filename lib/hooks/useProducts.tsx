@@ -107,10 +107,12 @@ const createPurchase = async () => {
 };
 
 export const useCreatePurchase = () => {
+  const { productsOnCart, setProductsOnCart } = useContext(UIContext);
   const queryClient = useQueryClient();
   return useMutation(createPurchase, {
     onSuccess: () => {
       queryClient.invalidateQueries('cart');
+      setProductsOnCart(0);
     },
   });
 };
