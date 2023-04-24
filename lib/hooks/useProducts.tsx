@@ -9,6 +9,30 @@ import {
 import { useContext } from 'react';
 import { UIContext } from '@/context/ui/UIContext';
 
+const getAllProducts = async () => {
+  const { data } = await techApi.get<ProductsResponse[]>('products');
+  return data;
+};
+
+export const useGetAllProducts = () => {
+  const { data, error, isLoading, isError } = useQuery(
+    ['products'],
+    getAllProducts
+  );
+  return { data, error, isLoading, isError };
+};
+
+export const getProductById = async (id: string): Promise<ProductsResponse> => {
+  const { data } = await techApi.get(`/products/${id}`);
+  return data;
+};
+
+export const useProductById = (id: string) => {
+  const productQuery = useQuery(['product', id], () => getProductById(id));
+
+  return productQuery;
+};
+
 const getCartProducts = async () => {
   const { data } = await techApi.get<CartResponse[]>('/cart');
   return data;
@@ -21,17 +45,6 @@ export const useCartProducts = () => {
   );
 
   return { data, error, isError, isLoading };
-};
-
-export const getProductById = async (id: string): Promise<ProductsResponse> => {
-  const { data } = await techApi.get(`/products/${id}`);
-  return data;
-};
-
-export const useProductById = (id: string) => {
-  const productQuery = useQuery(['product', id], () => getProductById(id));
-
-  return productQuery;
 };
 
 const addProductToCart = async (data: AddProductToCart) => {

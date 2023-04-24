@@ -18,28 +18,52 @@ import {
 import getProductById, {
   useAddProductToCart,
   useCartProducts,
+  useProductById,
 } from '@/lib/hooks/useProducts';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { CardProduct } from '@/components/ui/CardProduct';
 import { toast } from 'sonner';
 import { UIContext } from '@/context/ui/UIContext';
+import { useRouter } from 'next/router';
+import Loader from '@/components/ui/Loader';
+import { useGetAllProducts } from '../../lib/hooks/useProducts';
 
 interface Props {
-  product: ProductsResponse;
-  relatedProducts: ProductsResponse[];
+  // product: ProductsResponse;
+  // relatedProducts: ProductsResponse[];
 }
 
-const ProductPage: NextPageWithLayout<Props> = ({
-  product,
-  relatedProducts,
-}) => {
+const ProductPage: NextPageWithLayout<Props> = () => {
+  //states
   const [imageIndex, setImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
+  const [relatedProducts, setRelatedProducts] = useState<ProductsResponse[]>(
+    []
+  );
+
+  //router
+  const router = useRouter();
+  const { id } = router.query;
+
+  //context
   const { isUserLoggedIn } = useContext(UIContext);
-  const { data } = useCartProducts();
+
+  //query functions
+  const { data: cartProducts } = useCartProducts();
   const { mutateAsync: addProductToCart } = useAddProductToCart();
-  const { setProductsOnCart, productsOnCart } = useContext(UIContext);
+  const { data: allProducts } = useGetAllProducts();
+  const {
+    data: product,
+    error,
+    isLoading,
+    isError,
+  } = useProductById(id as string);
+
+  // ref
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  //functions
 
   const handleSliderBack = () => {
     setImageIndex(imageIndex === 0 ? 2 : imageIndex - 1);
@@ -73,25 +97,42 @@ const ProductPage: NextPageWithLayout<Props> = ({
     }
   };
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  //use effects
 
   useEffect(() => {
-    const container = containerRef.current!;
-    const containerWidth = container.offsetWidth;
-    const newPosition = imageIndex * (containerWidth / 3);
-    container.style.transform = `translateX(-${newPosition}px)`;
-  }, [imageIndex]);
+    if (product) {
+      const container = containerRef.current!;
+      const containerWidth = container?.offsetWidth;
+      const newPosition = imageIndex * (containerWidth / 3);
+      container.style.transform = `translateX(-${newPosition}px)`;
+    }
+  }, [imageIndex, product]);
 
   useEffect(() => {
-    if (data) {
-      const productInCart = data.find((item) => item.product.id === product.id);
+    if (cartProducts) {
+      const productInCart = cartProducts.find(
+        (item) => item.product.id === product?.id
+      );
       if (productInCart) {
         setIsAddedToCart(true);
       } else {
         setIsAddedToCart(false);
       }
     }
-  }, [data, product.id]);
+  }, [cartProducts, product?.id]);
+
+  useEffect(() => {
+    const related = allProducts?.filter(
+      (p) => p?.categoryId === product?.categoryId
+    );
+    setRelatedProducts(related as ProductsResponse[]);
+  }, [allProducts, product]);
+
+  // conditions
+
+  if (isLoading) return <Loader />;
+
+  if (isError) return <div>{`${error}`}</div>;
 
   return (
     <div className="w-screen max-w-screen-xl px-5 mx-auto my-5 overflow-x-hidden">
@@ -99,8 +140,8 @@ const ProductPage: NextPageWithLayout<Props> = ({
         <Link href="/" className="opacity-60">
           <HomeIcon />
         </Link>
-        <Link href={`/product/${product.id}`} className="opacity-60">
-          <span>{product.title}</span>
+        <Link href={`/product/${product?.id}`} className="opacity-60">
+          <span>{product?.title}</span>
         </Link>
       </Breadcrumbs>
       <div className="mt-5">
@@ -110,7 +151,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
               ref={containerRef}
               className={`w-[300%] flex  duration-500 ease-in-out h-96 slider`}
             >
-              {product.images.map((image) => (
+              {product?.images.map((image) => (
                 <div
                   className="flex items-center justify-center flex-1 w-full"
                   key={image.id}
@@ -137,7 +178,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
             </div>
             <div className="w-1/2 mx-auto mb-4 ">
               <div className="relative flex w-full">
-                {product.images.map((image, i) => (
+                {product?.images.map((image, i) => (
                   <div
                     role="button"
                     onClick={() => setImageIndex(i)}
@@ -184,7 +225,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                 <p className="text-xl font-semibold text-blue-gray-800">
                   Price
                 </p>
-                <p className="text-lg font-medium">${product.price}</p>
+                <p className="text-lg font-medium">${product?.price}</p>
               </div>
               <div className="space-y-1">
                 <div className=" text-end">
@@ -225,7 +266,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
                 disabled={isAddedToCart}
                 onClick={() =>
                   handleAddProductToCart({
-                    productId: product.id,
+                    productId: product?.id!,
                     quantity,
                   })
                 }
@@ -243,7 +284,7 @@ const ProductPage: NextPageWithLayout<Props> = ({
             </h3>
             <div className="grid grid-cols-1 gap-10 mx-auto place-items-center lg:grid-cols-2">
               {relatedProducts
-                .filter((related) => related.id !== product.id)
+                ?.filter((related) => related.id !== product?.id)
                 .map(({ id, title, images, price }) => (
                   <CardProduct
                     key={id}
@@ -261,31 +302,31 @@ const ProductPage: NextPageWithLayout<Props> = ({
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data } = await techApi.get<ProductsResponse[]>('/products');
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const { data } = await techApi.get<ProductsResponse[]>('/products');
 
-  return {
-    paths: data.map(({ id }) => ({
-      params: { id: String(id) },
-    })),
-    fallback: false,
-  };
-};
+//   return {
+//     paths: data.map(({ id }) => ({
+//       params: { id: String(id) },
+//     })),
+//     fallback: false,
+//   };
+// };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id } = params as { id: string };
+// export const getStaticProps: GetStaticProps = async ({ params }) => {
+//   const { id } = params as { id: string };
 
-  const product: ProductsResponse = await getProductById(id);
-  const { data } = await techApi.get<ProductsResponse[]>('/products');
+//   const product: ProductsResponse = await getProductById(id);
+//   const { data } = await techApi.get<ProductsResponse[]>('/products');
 
-  const relatedProducts = data.filter(
-    (p) => p.categoryId === product.categoryId
-  );
+//   const relatedProducts = data.filter(
+//     (p) => p.categoryId === product.categoryId
+//   );
 
-  return {
-    props: { product, relatedProducts },
-  };
-};
+//   return {
+//     props: { product, relatedProducts },
+//   };
+// };
 
 ProductPage.getLayout = (page: ReactElement) => {
   return <Layout>{page}</Layout>;
