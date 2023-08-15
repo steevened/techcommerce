@@ -302,31 +302,6 @@ const ProductPage: NextPageWithLayout<Props> = () => {
   );
 };
 
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const { data } = await techApi.get<ProductsResponse[]>('/products');
-
-//   return {
-//     paths: data.map(({ id }) => ({
-//       params: { id: String(id) },
-//     })),
-//     fallback: false,
-//   };
-// };
-
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const { id } = params as { id: string };
-
-//   const product: ProductsResponse = await getProductById(id);
-//   const { data } = await techApi.get<ProductsResponse[]>('/products');
-
-//   const relatedProducts = data.filter(
-//     (p) => p.categoryId === product.categoryId
-//   );
-
-//   return {
-//     props: { product, relatedProducts },
-//   };
-// };
 
 ProductPage.getLayout = (page: ReactElement) => {
   return <Layout>{page}</Layout>;
